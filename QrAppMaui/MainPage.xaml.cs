@@ -1,14 +1,17 @@
-﻿using ZXing.Net.Maui;
+﻿using ZXing;
+using ZXing.Net.Maui;
 
 namespace QrAppMaui
 {
-    public partial class MainPage : ContentPage
+    public partial class MainPage: ContentPage
     {
         bool _isCameraRunning;
+
         public MainPage()
         {
             InitializeComponent();
 
+       
             BarcodeReader.Options = new BarcodeReaderOptions
             {
                 Formats = BarcodeFormats.All,
@@ -16,6 +19,8 @@ namespace QrAppMaui
                 Multiple = false
             };
         }
+
+       
         void OnCameraBoxTapped(object sender, TappedEventArgs e)
         {
             if (!_isCameraRunning)
@@ -73,25 +78,38 @@ namespace QrAppMaui
             if (result is null)
                 return;
 
-
             BarcodeReader.IsDetecting = false;
 
-            var code = result.Value;
-            var student = LookupStudentByCode(code);
+            var code = result.Value?.Trim() ?? string.Empty;
+
+   
+            var words = code.Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
             Dispatcher.Dispatch(() =>
             {
+                if (words.Length != 2)
+                {
+                    ShowScanError();
+                    return;
+                }
+
                 ScannedCodeLabel.Text = code;
-                FirstNameEntry.Text = student.firstName;
-                LastNameEntry.Text = student.lastName;
+                FirstNameEntry.Text = words[0];
+                LastNameEntry.Text = words[1];
+                ClassEntry.Text = string.Empty;
                 ShowResultSheet();
             });
         }
 
-        (string firstName, string lastName) LookupStudentByCode(string code)
+        async void ShowScanError()
         {
+            ScanErrorBadge.IsVisible = true;
+            await Task.Delay(1500);
+            ScanErrorBadge.IsVisible = false;
 
-            return (string.Empty, string.Empty);
+         
+            if (_isCameraRunning)
+                BarcodeReader.IsDetecting = true;
         }
 
         void ShowResultSheet()
@@ -109,6 +127,7 @@ namespace QrAppMaui
             LastNameEntry.Text = string.Empty;
             ScannedCodeLabel.Text = "—";
 
+           
             if (_isCameraRunning)
                 BarcodeReader.IsDetecting = true;
         }
@@ -128,7 +147,7 @@ namespace QrAppMaui
                 return;
             }
 
-            Checkinstore.Entries.Insert (0, new Checkinentry
+            Checkinstore.Entries.Insert(0, new Checkinentry
             {
                 FirstName = firstName,
                 LastName = lastName,
@@ -140,23 +159,23 @@ namespace QrAppMaui
 
         void OnScannerTabTapped(object sender, TappedEventArgs e)
         {
-
+         
         }
 
         void OnListTabTapped(object sender, TappedEventArgs e)
         {
-
+           
         }
 
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
 
-
+     
             if (_isCameraRunning)
                 StopCamera();
         }
     }
-
 }
+
 
