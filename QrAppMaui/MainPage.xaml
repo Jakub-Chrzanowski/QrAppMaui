@@ -119,18 +119,7 @@
                                                 VerticalOptions="Center" />
 
            
-                            <Polyline Points="0,20 0,0 20,0" Stroke="{StaticResource AccentOrange}"
-                                      StrokeThickness="3" StrokeLineCap="Round"
-                                      HorizontalOptions="Start" VerticalOptions="Start" Margin="14" />
-                            <Polyline Points="0,0 20,0 20,20" Stroke="{StaticResource AccentOrange}"
-                                      StrokeThickness="3" StrokeLineCap="Round"
-                                      HorizontalOptions="End" VerticalOptions="Start" Margin="14" />
-                            <Polyline Points="0,0 0,20 20,20" Stroke="{StaticResource AccentOrange}"
-                                      StrokeThickness="3" StrokeLineCap="Round"
-                                      HorizontalOptions="Start" VerticalOptions="End" Margin="14" />
-                            <Polyline Points="20,0 20,20 0,20" Stroke="{StaticResource AccentOrange}"
-                                      StrokeThickness="3" StrokeLineCap="Round"
-                                      HorizontalOptions="End" VerticalOptions="End" Margin="14" />
+                            
                         </Grid>
                     </Border>
 
