@@ -6,6 +6,7 @@
              NavigationPage.HasNavigationBar="False"
              BackgroundColor="{StaticResource PageBg}">
 
+
     <ContentPage.Resources>
         <ResourceDictionary>
             <Color x:Key="PageBg">#15151D</Color>
@@ -35,6 +36,7 @@
 
     <Grid RowDefinitions="*,Auto" RowSpacing="0">
 
+       
         <Grid Grid.Row="0">
 
             <ScrollView>
@@ -50,6 +52,7 @@
                                TextColor="{StaticResource TextSecondary}" />
                     </VerticalStackLayout>
 
+                
                     <Border WidthRequest="240"
                             HeightRequest="240"
                             HorizontalOptions="Center"
@@ -65,7 +68,7 @@
                                 <TapGestureRecognizer Tapped="OnCameraBoxTapped" />
                             </Grid.GestureRecognizers>
 
-                         
+                           
                             <zxing:CameraBarcodeReaderView
                                 x:Name="BarcodeReader"
                                 IsVisible="False"
@@ -74,6 +77,7 @@
                                 HorizontalOptions="Fill"
                                 VerticalOptions="Fill" />
 
+                           
                             <VerticalStackLayout x:Name="CameraPlaceholder"
                                                   Spacing="14"
                                                   HorizontalOptions="Center"
@@ -112,7 +116,7 @@
                                        HorizontalTextAlignment="Center" />
                             </VerticalStackLayout>
 
-                    
+                           
                             <ActivityIndicator x:Name="ScanningIndicator"
                                                 IsVisible="False"
                                                 IsRunning="False"
@@ -120,7 +124,7 @@
                                                 HorizontalOptions="Center"
                                                 VerticalOptions="Center" />
 
-           
+                           
                             <Polyline Points="0,20 0,0 20,0" Stroke="{StaticResource AccentOrange}"
                                       StrokeThickness="3" StrokeLineCap="Round"
                                       HorizontalOptions="Start" VerticalOptions="Start" Margin="14" />
@@ -133,6 +137,24 @@
                             <Polyline Points="20,0 20,20 0,20" Stroke="{StaticResource AccentOrange}"
                                       StrokeThickness="3" StrokeLineCap="Round"
                                       HorizontalOptions="End" VerticalOptions="End" Margin="14" />
+
+                            
+                            <Border x:Name="ScanErrorBadge"
+                                    IsVisible="False"
+                                    BackgroundColor="#CC1A1A22"
+                                    Stroke="Transparent"
+                                    Padding="12,8"
+                                    VerticalOptions="End"
+                                    HorizontalOptions="Center"
+                                    Margin="0,0,0,16">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="10" />
+                                </Border.StrokeShape>
+                                <Label Text="Nieprawidłowy kod – wymagane imię i nazwisko"
+                                       FontSize="12"
+                                       TextColor="{StaticResource TextPrimary}"
+                                       HorizontalTextAlignment="Center" />
+                            </Border>
                         </Grid>
                     </Border>
 
@@ -152,7 +174,7 @@
                 </VerticalStackLayout>
             </ScrollView>
 
-       
+            
             <Grid x:Name="ResultBackdrop"
                   IsVisible="False"
                   BackgroundColor="Transparent">
@@ -160,7 +182,6 @@
                     <TapGestureRecognizer Tapped="OnBackdropTapped" />
                 </Grid.GestureRecognizers>
             </Grid>
-
 
             <Border x:Name="ResultSheet"
                     IsVisible="False"
@@ -223,6 +244,22 @@
                         </Border>
                     </VerticalStackLayout>
 
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="Klasa" FontSize="13" TextColor="{StaticResource SheetTextSecondary}" />
+                        <Border Stroke="{StaticResource InputBorder}" StrokeThickness="1"
+                                BackgroundColor="{StaticResource InputBg}" Padding="14,0">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="12" />
+                            </Border.StrokeShape>
+                            <Entry x:Name="ClassEntry"
+                                   Placeholder="np. 3B"
+                                   PlaceholderColor="{StaticResource SheetTextSecondary}"
+                                   TextColor="{StaticResource SheetTextPrimary}"
+                                   BackgroundColor="Transparent"
+                                   HeightRequest="46" />
+                        </Border>
+                    </VerticalStackLayout>
+
                     <HorizontalStackLayout Spacing="20" HorizontalOptions="End" Margin="0,4,0,0">
                         <Button Text="Anuluj"
                                 BackgroundColor="Transparent"
@@ -242,7 +279,9 @@
             </Border>
 
         </Grid>
-       <Grid Grid.Row="1" RowDefinitions="1,Auto" BackgroundColor="{StaticResource PageBg}">
+
+      
+        <Grid Grid.Row="1" RowDefinitions="1,Auto" BackgroundColor="{StaticResource PageBg}">
             <BoxView Grid.Row="0" Color="{StaticResource BorderSubtle}" HeightRequest="1" />
 
             <Grid Grid.Row="1" ColumnDefinitions="*,*" Padding="0,10,0,18">
