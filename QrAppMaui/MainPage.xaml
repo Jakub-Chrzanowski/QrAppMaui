@@ -1,6 +1,281 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="QrAppMaui.MainPage">
+             x:Class="QrAppMaui.MainPage"
+             xmlns:zxing="clr-namespace:ZXing.Net.Maui.Controls;assembly=ZXing.Net.MAUI.Controls">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Color x:Key="PageBg">#15151D</Color>
+            <Color x:Key="CameraBoxBg">#1E1E28</Color>
+            <Color x:Key="BorderSubtle">#2A2A35</Color>
+            <Color x:Key="TextPrimary">#F5F5F7</Color>
+            <Color x:Key="TextSecondary">#9498A3</Color>
+            <Color x:Key="AccentOrange">#F4A93B</Color>
+            <Color x:Key="AccentOrangeText">#1A1A22</Color>
+            <Color x:Key="SheetBg">#EFE8DA</Color>
+            <Color x:Key="InputBg">#F8F4EA</Color>
+            <Color x:Key="InputBorder">#DDD3BE</Color>
+            <Color x:Key="SheetTextPrimary">#24242B</Color>
+            <Color x:Key="SheetTextSecondary">#8B8578</Color>
+            <Color x:Key="DragHandle">#D8CDB8</Color>
+
+            <Style x:Key="PrimaryPillButton" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="{StaticResource AccentOrange}" />
+                <Setter Property="TextColor" Value="{StaticResource AccentOrangeText}" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="HeightRequest" Value="54" />
+                <Setter Property="CornerRadius" Value="27" />
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="*,Auto" RowSpacing="0">
+
+        <Grid Grid.Row="0">
+
+            <ScrollView>
+                <VerticalStackLayout Padding="24,32,24,24" Spacing="20">
+
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Skaner"
+                               FontSize="28"
+                               FontAttributes="Bold"
+                               TextColor="{StaticResource TextPrimary}" />
+                        <Label Text="Zeskanuj kod ucznia."
+                               FontSize="15"
+                               TextColor="{StaticResource TextSecondary}" />
+                    </VerticalStackLayout>
+
+                    <Border WidthRequest="240"
+                            HeightRequest="240"
+                            HorizontalOptions="Center"
+                            Stroke="Transparent"
+                            BackgroundColor="{StaticResource CameraBoxBg}"
+                            Margin="0,12,0,0">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="24" />
+                        </Border.StrokeShape>
+
+                        <Grid>
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnCameraBoxTapped" />
+                            </Grid.GestureRecognizers>
+
+                         
+                            <zxing:CameraBarcodeReaderView
+                                x:Name="BarcodeReader"
+                                IsVisible="False"
+                                IsDetecting="False"
+                                BarcodesDetected="OnBarcodesDetected"
+                                HorizontalOptions="Fill"
+                                VerticalOptions="Fill" />
+
+                            <VerticalStackLayout x:Name="CameraPlaceholder"
+                                                  Spacing="14"
+                                                  HorizontalOptions="Center"
+                                                  VerticalOptions="Center"
+                                                  Padding="24,0">
+
+                                <Grid x:Name="CameraIconGrid"
+                                      WidthRequest="64" HeightRequest="50"
+                                      HorizontalOptions="Center">
+                                    <RoundRectangle WidthRequest="64" HeightRequest="46"
+                                                    CornerRadius="10"
+                                                    Stroke="{StaticResource TextSecondary}"
+                                                    StrokeThickness="2"
+                                                    Fill="Transparent"
+                                                    VerticalOptions="End" />
+                                    <Rectangle WidthRequest="18" HeightRequest="8"
+                                               RadiusX="3" RadiusY="3"
+                                               Stroke="{StaticResource TextSecondary}"
+                                               StrokeThickness="2"
+                                               Fill="{StaticResource CameraBoxBg}"
+                                               VerticalOptions="Start"
+                                               HorizontalOptions="Center"
+                                               TranslationY="2" />
+                                    <Ellipse WidthRequest="20" HeightRequest="20"
+                                             Stroke="{StaticResource TextSecondary}"
+                                             StrokeThickness="2"
+                                             Fill="Transparent"
+                                             VerticalOptions="End"
+                                             TranslationY="-2" />
+                                </Grid>
+
+                                <Label x:Name="CameraPlaceholderText"
+                                       Text="Uruchom aparat, by rozpocząć skanowanie"
+                                       FontSize="13"
+                                       TextColor="{StaticResource TextSecondary}"
+                                       HorizontalTextAlignment="Center" />
+                            </VerticalStackLayout>
+
+                    
+                            <ActivityIndicator x:Name="ScanningIndicator"
+                                                IsVisible="False"
+                                                IsRunning="False"
+                                                Color="{StaticResource AccentOrange}"
+                                                HorizontalOptions="Center"
+                                                VerticalOptions="Center" />
+
+           
+                            <Polyline Points="0,20 0,0 20,0" Stroke="{StaticResource AccentOrange}"
+                                      StrokeThickness="3" StrokeLineCap="Round"
+                                      HorizontalOptions="Start" VerticalOptions="Start" Margin="14" />
+                            <Polyline Points="0,0 20,0 20,20" Stroke="{StaticResource AccentOrange}"
+                                      StrokeThickness="3" StrokeLineCap="Round"
+                                      HorizontalOptions="End" VerticalOptions="Start" Margin="14" />
+                            <Polyline Points="0,0 0,20 20,20" Stroke="{StaticResource AccentOrange}"
+                                      StrokeThickness="3" StrokeLineCap="Round"
+                                      HorizontalOptions="Start" VerticalOptions="End" Margin="14" />
+                            <Polyline Points="20,0 20,20 0,20" Stroke="{StaticResource AccentOrange}"
+                                      StrokeThickness="3" StrokeLineCap="Round"
+                                      HorizontalOptions="End" VerticalOptions="End" Margin="14" />
+                        </Grid>
+                    </Border>
+
+                    <Label x:Name="HelperLabel"
+                           Text="Naciśnij, by włączyć podgląd z kamery."
+                           FontSize="13"
+                           TextColor="{StaticResource TextSecondary}"
+                           HorizontalTextAlignment="Center"
+                           HorizontalOptions="Center" />
+
+                    <Button x:Name="StartCameraButton"
+                            Text="Uruchom aparat"
+                            Style="{StaticResource PrimaryPillButton}"
+                            Clicked="OnStartCameraClicked"
+                            Margin="0,8,0,0" />
+
+                </VerticalStackLayout>
+            </ScrollView>
+
+       
+            <Grid x:Name="ResultBackdrop"
+                  IsVisible="False"
+                  BackgroundColor="Transparent">
+                <Grid.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnBackdropTapped" />
+                </Grid.GestureRecognizers>
+            </Grid>
+
+
+            <Border x:Name="ResultSheet"
+                    IsVisible="False"
+                    BackgroundColor="{StaticResource SheetBg}"
+                    Stroke="Transparent"
+                    VerticalOptions="End"
+                    Padding="24,12,24,24">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="24,24,0,0" />
+                </Border.StrokeShape>
+                <Border.Shadow>
+                    <Shadow Brush="Black" Opacity="0.35" Radius="24" Offset="0,-6" />
+                </Border.Shadow>
+
+                <VerticalStackLayout Spacing="18">
+
+                    <BoxView WidthRequest="40" HeightRequest="4" CornerRadius="2"
+                             Color="{StaticResource DragHandle}"
+                             HorizontalOptions="Center" />
+
+                    <VerticalStackLayout Spacing="2">
+                        <Label Text="Kod odczytany"
+                               FontSize="18" FontAttributes="Bold"
+                               TextColor="{StaticResource SheetTextPrimary}" />
+                        <Label x:Name="ScannedCodeLabel"
+                               Text="—"
+                               FontSize="13"
+                               TextColor="{StaticResource SheetTextSecondary}" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="Imię" FontSize="13" TextColor="{StaticResource SheetTextSecondary}" />
+                        <Border Stroke="{StaticResource InputBorder}" StrokeThickness="1"
+                                BackgroundColor="{StaticResource InputBg}" Padding="14,0">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="12" />
+                            </Border.StrokeShape>
+                            <Entry x:Name="FirstNameEntry"
+                                   Placeholder="np. Jan"
+                                   PlaceholderColor="{StaticResource SheetTextSecondary}"
+                                   TextColor="{StaticResource SheetTextPrimary}"
+                                   BackgroundColor="Transparent"
+                                   HeightRequest="46" />
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="Nazwisko" FontSize="13" TextColor="{StaticResource SheetTextSecondary}" />
+                        <Border Stroke="{StaticResource InputBorder}" StrokeThickness="1"
+                                BackgroundColor="{StaticResource InputBg}" Padding="14,0">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="12" />
+                            </Border.StrokeShape>
+                            <Entry x:Name="LastNameEntry"
+                                   Placeholder="np. Kowalski"
+                                   PlaceholderColor="{StaticResource SheetTextSecondary}"
+                                   TextColor="{StaticResource SheetTextPrimary}"
+                                   BackgroundColor="Transparent"
+                                   HeightRequest="46" />
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <HorizontalStackLayout Spacing="20" HorizontalOptions="End" Margin="0,4,0,0">
+                        <Button Text="Anuluj"
+                                BackgroundColor="Transparent"
+                                TextColor="{StaticResource SheetTextSecondary}"
+                                FontSize="15"
+                                BorderWidth="0"
+                                Clicked="OnCancelClicked" />
+                        <Button Text="Zapisz wpis"
+                                Style="{StaticResource PrimaryPillButton}"
+                                HeightRequest="46"
+                                WidthRequest="150"
+                                FontSize="15"
+                                Clicked="OnSaveClicked" />
+                    </HorizontalStackLayout>
+
+                </VerticalStackLayout>
+            </Border>
+
+        </Grid>
+       <Grid Grid.Row="1" RowDefinitions="1,Auto" BackgroundColor="{StaticResource PageBg}">
+            <BoxView Grid.Row="0" Color="{StaticResource BorderSubtle}" HeightRequest="1" />
+
+            <Grid Grid.Row="1" ColumnDefinitions="*,*" Padding="0,10,0,18">
+
+                <VerticalStackLayout Grid.Column="0" Spacing="4" HorizontalOptions="Center">
+                    <VerticalStackLayout.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnScannerTabTapped" />
+                    </VerticalStackLayout.GestureRecognizers>
+                    <RoundRectangle WidthRequest="20" HeightRequest="20" CornerRadius="4"
+                                    Stroke="{StaticResource AccentOrange}" StrokeThickness="2"
+                                    Fill="Transparent" HorizontalOptions="Center" />
+                    <Label Text="Skaner" FontSize="12" TextColor="{StaticResource AccentOrange}"
+                           HorizontalTextAlignment="Center" />
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Grid.Column="1" Spacing="5" HorizontalOptions="Center">
+                    <VerticalStackLayout.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnListTabTapped" />
+                    </VerticalStackLayout.GestureRecognizers>
+                    <VerticalStackLayout Spacing="3" HorizontalOptions="Center" Margin="0,2,0,0">
+                        <Rectangle WidthRequest="18" HeightRequest="2" RadiusX="1" RadiusY="1"
+                                   Fill="{StaticResource TextSecondary}" />
+                        <Rectangle WidthRequest="18" HeightRequest="2" RadiusX="1" RadiusY="1"
+                                   Fill="{StaticResource TextSecondary}" />
+                        <Rectangle WidthRequest="18" HeightRequest="2" RadiusX="1" RadiusY="1"
+                                   Fill="{StaticResource TextSecondary}" />
+                    </VerticalStackLayout>
+                    <Label Text="Lista wejść" FontSize="12" TextColor="{StaticResource TextSecondary}"
+                           HorizontalTextAlignment="Center" />
+                </VerticalStackLayout>
+
+            </Grid>
+        </Grid>
+
+    </Grid>
+
 
 </ContentPage>
