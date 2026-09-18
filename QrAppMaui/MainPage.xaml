@@ -6,7 +6,19 @@
 
     <ContentPage.Resources>
         <ResourceDictionary>
-            
+            <Color x:Key="PageBg">#15151D</Color>
+            <Color x:Key="CameraBoxBg">#1E1E28</Color>
+            <Color x:Key="BorderSubtle">#2A2A35</Color>
+            <Color x:Key="TextPrimary">#F5F5F7</Color>
+            <Color x:Key="TextSecondary">#9498A3</Color>
+            <Color x:Key="AccentOrange">#F4A93B</Color>
+            <Color x:Key="AccentOrangeText">#1A1A22</Color>
+            <Color x:Key="SheetBg">#EFE8DA</Color>
+            <Color x:Key="InputBg">#F8F4EA</Color>
+            <Color x:Key="InputBorder">#DDD3BE</Color>
+            <Color x:Key="SheetTextPrimary">#24242B</Color>
+            <Color x:Key="SheetTextSecondary">#8B8578</Color>
+            <Color x:Key="DragHandle">#D8CDB8</Color>
 
             <Style x:Key="PrimaryPillButton" TargetType="Button">
                 <Setter Property="BackgroundColor" Value="{StaticResource AccentOrange}" />
