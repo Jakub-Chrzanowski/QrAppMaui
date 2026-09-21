@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="QrAppMaui.EntriesPage"
+             NavigationPage.HasNavigationBar="False"
+             BackgroundColor="{StaticResource PageBg}">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Color x:Key="PageBg">#15151D</Color>
+            <Color x:Key="CameraBoxBg">#1E1E28</Color>
+            <Color x:Key="BorderSubtle">#2A2A35</Color>
+            <Color x:Key="TextPrimary">#F5F5F7</Color>
+            <Color x:Key="TextSecondary">#9498A3</Color>
+            <Color x:Key="AccentOrange">#F4A93B</Color>
+            <Color x:Key="AccentOrangeText">#1A1A22</Color>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="*,Auto" RowSpacing="0">
+
+        <Grid Grid.Row="0" RowDefinitions="Auto,Auto,*" Padding="24,32,24,0" RowSpacing="16">
+
+            <VerticalStackLayout Grid.Row="0" Spacing="4">
+                <Label Text="Lista wejść"
+                       FontSize="28"
+                       FontAttributes="Bold"
+                       TextColor="{StaticResource TextPrimary}" />
+                <Label x:Name="CountLabel"
+                       Text="Wyniki: 0"
+                       FontSize="15"
+                       TextColor="{StaticResource TextSecondary}" />
+            </VerticalStackLayout>
+
+            <VerticalStackLayout Grid.Row="1" Spacing="10">
+
+                <Border Stroke="{StaticResource BorderSubtle}" StrokeThickness="1"
+                        BackgroundColor="{StaticResource CameraBoxBg}" Padding="14,0">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="12" />
+                    </Border.StrokeShape>
+                    <Entry x:Name="SearchEntry"
+                           Placeholder="Szukaj: imię, nazwisko, klasa, nr seryjny"
+                           PlaceholderColor="{StaticResource TextSecondary}"
+                           TextColor="{StaticResource TextPrimary}"
+                           BackgroundColor="Transparent"
+                           ClearButtonVisibility="WhileEditing"
+                           HeightRequest="46"
+                           TextChanged="OnFilterChanged" />
+                </Border>
+
+                <Grid ColumnDefinitions="Auto,Auto,*" ColumnSpacing="6" VerticalOptions="Center">
+                    <CheckBox x:Name="DateFilterCheck"
+                              Grid.Column="0"
+                              Color="{StaticResource AccentOrange}"
+                              CheckedChanged="OnFilterChanged" />
+                    <Label Grid.Column="1"
+                           Text="Data:"
+                           FontSize="14"
+                           TextColor="{StaticResource TextPrimary}"
+                           VerticalOptions="Center" />
+                    <DatePicker x:Name="DateFilterPicker"
+                                Grid.Column="2"
+                                Format="dd.MM.yyyy"
+                                TextColor="{StaticResource TextPrimary}"
+                                BackgroundColor="Transparent"
+                                IsEnabled="{Binding IsChecked, Source={x:Reference DateFilterCheck}}"
+                                DateSelected="OnFilterChanged" />
+                </Grid>
+            </VerticalStackLayout>
+
+            <CollectionView x:Name="EntriesList" Grid.Row="2">
+                <CollectionView.EmptyView>
+                    <Label Text="Brak wpisów."
+                           FontSize="14"
+                           TextColor="{StaticResource TextSecondary}"
+                           HorizontalOptions="Center"
+                           Margin="0,40,0,0" />
+                </CollectionView.EmptyView>
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Border Margin="0,0,0,10"
+                                Padding="14,10,6,10"
+                                BackgroundColor="{StaticResource CameraBoxBg}"
+                                Stroke="{StaticResource BorderSubtle}"
+                                StrokeThickness="1">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="16" />
+                            </Border.StrokeShape>
+
+                            <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="12">
+
+                                <Border Grid.Column="0"
+                                        WidthRequest="44"
+                                        HeightRequest="44"
+                                        BackgroundColor="{StaticResource AccentOrange}"
+                                        Stroke="Transparent"
+                                        VerticalOptions="Center">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="22" />
+                                    </Border.StrokeShape>
+                                    <Label Text="{Binding Initials}"
+                                           FontAttributes="Bold"
+                                           FontSize="15"
+                                           TextColor="{StaticResource AccentOrangeText}"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center" />
+                                </Border>
+
+                                <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                                    <Label Text="{Binding FullName}"
+                                           FontSize="16"
+                                           FontAttributes="Bold"
+                                           TextColor="{StaticResource TextPrimary}" />
+                                    <Label Text="{Binding ClassName, StringFormat='Klasa {0}'}"
+                                           FontSize="13"
+                                           TextColor="{StaticResource TextSecondary}" />
+                                    <Label Text="{Binding SerialNumber, StringFormat='S/N: {0}'}"
+                                           FontSize="12"
+                                           TextColor="{StaticResource TextSecondary}" />
+                                </VerticalStackLayout>
+
+                                <VerticalStackLayout Grid.Column="2" Spacing="2" VerticalOptions="Center">
+                                    <Label Text="{Binding Timestamp, StringFormat='{0:dd.MM.yyyy}'}"
+                                           FontSize="13"
+                                           TextColor="{StaticResource TextPrimary}"
+                                           HorizontalTextAlignment="End" />
+                                    <Label Text="{Binding Timestamp, StringFormat='{0:HH:mm}'}"
+                                           FontSize="12"
+                                           TextColor="{StaticResource TextSecondary}"
+                                           HorizontalTextAlignment="End" />
+                                </VerticalStackLayout>
+
+                                <Button Grid.Column="3"
+                                        Text="✕"
+                                        FontSize="18"
+                                        Padding="0"
+                                        WidthRequest="40"
+                                        HeightRequest="40"
+                                        BackgroundColor="Transparent"
+                                        TextColor="{StaticResource TextSecondary}"
+                                        VerticalOptions="Center"
+                                        Clicked="OnDeleteClicked" />
+
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Grid>
+
+        <Grid Grid.Row="1" RowDefinitions="1,Auto" BackgroundColor="{StaticResource PageBg}">
+            <BoxView Grid.Row="0" Color="{StaticResource BorderSubtle}" HeightRequest="1" />
+
+            <Grid Grid.Row="1" ColumnDefinitions="*,*" Padding="0,10,0,18">
+
+                <VerticalStackLayout Grid.Column="0" Spacing="4" HorizontalOptions="Center">
+                    <VerticalStackLayout.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnScannerTabTapped" />
+                    </VerticalStackLayout.GestureRecognizers>
+                    <RoundRectangle WidthRequest="20" HeightRequest="20" CornerRadius="4"
+                                    Stroke="{StaticResource TextSecondary}" StrokeThickness="2"
+                                    Fill="Transparent" HorizontalOptions="Center" />
+                    <Label Text="Skaner" FontSize="12" TextColor="{StaticResource TextSecondary}"
+                           HorizontalTextAlignment="Center" />
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Grid.Column="1" Spacing="5" HorizontalOptions="Center">
+                    <VerticalStackLayout.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnListTabTapped" />
+                    </VerticalStackLayout.GestureRecognizers>
+                    <VerticalStackLayout Spacing="3" HorizontalOptions="Center" Margin="0,2,0,0">
+                        <Rectangle WidthRequest="18" HeightRequest="2" RadiusX="1" RadiusY="1"
+                                   Fill="{StaticResource AccentOrange}" />
+                        <Rectangle WidthRequest="18" HeightRequest="2" RadiusX="1" RadiusY="1"
+                                   Fill="{StaticResource AccentOrange}" />
+                        <Rectangle WidthRequest="18" HeightRequest="2" RadiusX="1" RadiusY="1"
+                                   Fill="{StaticResource AccentOrange}" />
+                    </VerticalStackLayout>
+                    <Label Text="Lista wejść" FontSize="12" TextColor="{StaticResource AccentOrange}"
+                           HorizontalTextAlignment="Center" />
+                </VerticalStackLayout>
+
+            </Grid>
+        </Grid>
+
+    </Grid>
+</ContentPage>

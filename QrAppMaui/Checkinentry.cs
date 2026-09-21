@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SQLite;
+﻿using SQLite;
+
 namespace QrAppMaui
 {
-    internal class Checkinentry
+    public class Checkinentry
     {
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
+
         public string SerialNumber { get; set; } = string.Empty;
 
         public string FirstName { get; set; } = string.Empty;

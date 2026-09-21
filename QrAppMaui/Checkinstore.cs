@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
 using SQLite;
+
 namespace QrAppMaui
 {
-    internal class Checkinstore
+    public static class Checkinstore
     {
         static SQLiteAsyncConnection? _db;
         static readonly SemaphoreSlim _lock = new(1, 1);
@@ -52,6 +48,13 @@ namespace QrAppMaui
             await InitAsync();
             await _db!.InsertAsync(entry);
             Entries.Insert(0, entry);
+        }
+
+        public static async Task DeleteAsync(Checkinentry entry)
+        {
+            await InitAsync();
+            await _db!.DeleteAsync(entry);
+            Entries.Remove(entry);
         }
     }
 }

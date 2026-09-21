@@ -188,8 +188,9 @@ namespace QrAppMaui
         {
         }
 
-        void OnListTabTapped(object sender, TappedEventArgs e)
+        async void OnListTabTapped(object sender, TappedEventArgs e)
         {
+            await Navigation.PushAsync(new EntriesPage(), false);
         }
 
         protected override void OnDisappearing()
