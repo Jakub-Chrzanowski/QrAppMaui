@@ -3,15 +3,15 @@ using ZXing.Net.Maui;
 
 namespace QrAppMaui
 {
-    public partial class MainPage: ContentPage
+    public partial class MainPage : ContentPage
     {
         bool _isCameraRunning;
+        string _scannedSerial = string.Empty;
 
         public MainPage()
         {
             InitializeComponent();
 
-       
             BarcodeReader.Options = new BarcodeReaderOptions
             {
                 Formats = BarcodeFormats.All,
@@ -20,7 +20,20 @@ namespace QrAppMaui
             };
         }
 
-       
+        protected override async void OnAppearing()
+        {
+            base.OnAppearing();
+
+            try
+            {
+                await Checkinstore.InitAsync();
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Błąd bazy danych", ex.Message, "OK");
+            }
+        }
+
         void OnCameraBoxTapped(object sender, TappedEventArgs e)
         {
             if (!_isCameraRunning)
@@ -40,7 +53,7 @@ namespace QrAppMaui
             {
                 await DisplayAlert(
                     "Brak uprawnień",
-                    "Aby skanować kody uczniów, zezwól aplikacji na dostęp do aparatu w ustawieniach systemowych.",
+                    "Aby skanować kody QR, zezwól aplikacji na dostęp do aparatu w ustawieniach systemowych.",
                     "OK");
                 return;
             }
@@ -57,7 +70,7 @@ namespace QrAppMaui
             BarcodeReader.IsDetecting = true;
 
             StartCameraButton.Text = "Zatrzymaj skanowanie";
-            HelperLabel.Text = "Skieruj aparat na kod ucznia.";
+            HelperLabel.Text = "Skieruj aparat na kod QR urządzenia.";
         }
 
         void StopCamera()
@@ -80,23 +93,24 @@ namespace QrAppMaui
 
             BarcodeReader.IsDetecting = false;
 
-            var code = result.Value?.Trim() ?? string.Empty;
-
-   
-            var words = code.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            var serial = result.Value?.Trim() ?? string.Empty;
 
             Dispatcher.Dispatch(() =>
             {
-                if (words.Length != 2)
+                if (string.IsNullOrEmpty(serial))
                 {
                     ShowScanError();
                     return;
                 }
 
-                ScannedCodeLabel.Text = code;
-                FirstNameEntry.Text = words[0];
-                LastNameEntry.Text = words[1];
+                _scannedSerial = serial;
+                ScannedCodeLabel.Text = serial;
+
+
+                FirstNameEntry.Text = string.Empty;
+                LastNameEntry.Text = string.Empty;
                 ClassEntry.Text = string.Empty;
+
                 ShowResultSheet();
             });
         }
@@ -107,7 +121,6 @@ namespace QrAppMaui
             await Task.Delay(1500);
             ScanErrorBadge.IsVisible = false;
 
-         
             if (_isCameraRunning)
                 BarcodeReader.IsDetecting = true;
         }
@@ -123,11 +136,12 @@ namespace QrAppMaui
             ResultBackdrop.IsVisible = false;
             ResultSheet.IsVisible = false;
 
+            _scannedSerial = string.Empty;
             FirstNameEntry.Text = string.Empty;
             LastNameEntry.Text = string.Empty;
+            ClassEntry.Text = string.Empty;
             ScannedCodeLabel.Text = "—";
 
-           
             if (_isCameraRunning)
                 BarcodeReader.IsDetecting = true;
         }
@@ -140,42 +154,50 @@ namespace QrAppMaui
         {
             var firstName = FirstNameEntry.Text?.Trim();
             var lastName = LastNameEntry.Text?.Trim();
+            var className = ClassEntry.Text?.Trim();
 
-            if (string.IsNullOrWhiteSpace(firstName) || string.IsNullOrWhiteSpace(lastName))
+            if (string.IsNullOrWhiteSpace(firstName) ||
+                string.IsNullOrWhiteSpace(lastName) ||
+                string.IsNullOrWhiteSpace(className))
             {
-                await DisplayAlert("Brak danych", "Uzupełnij imię i nazwisko ucznia.", "OK");
+                await DisplayAlert("Brak danych", "Uzupełnij imię, nazwisko i klasę.", "OK");
                 return;
             }
 
-            Checkinstore.Entries.Insert(0, new Checkinentry
+            try
             {
-                FirstName = firstName,
-                LastName = lastName,
-                Timestamp = DateTime.Now
-            });
+                await Checkinstore.AddAsync(new Checkinentry
+                {
+                    SerialNumber = _scannedSerial,
+                    FirstName = firstName,
+                    LastName = lastName,
+                    ClassName = className,
+                    Timestamp = DateTime.Now
+                });
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Błąd zapisu", ex.Message, "OK");
+                return;
+            }
 
             HideResultSheet();
         }
 
         void OnScannerTabTapped(object sender, TappedEventArgs e)
         {
-         
         }
 
         void OnListTabTapped(object sender, TappedEventArgs e)
         {
-           
         }
 
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
 
-     
             if (_isCameraRunning)
                 StopCamera();
         }
     }
 }
-
-
