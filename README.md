@@ -29,7 +29,7 @@ Aplikacja .NET MAUI do rejestrowania obecności uczniów przez skanowanie kodów
 - Automatyczne wznawianie skanowania po powrocie na ekran skanera (np. z listy wejść), bez konieczności ponownego uruchamiania podglądu kamery.
 - Panel z wynikiem odczytu zamyka się wyłącznie przyciskiem „Anuluj” lub „Zapisz wpis” — przypadkowe dotknięcie ekranu nie kasuje wpisywanych danych.
 
-## Stos technologiczny
+## Technologie
 
 | Warstwa | Technologia |
 |---|---|
