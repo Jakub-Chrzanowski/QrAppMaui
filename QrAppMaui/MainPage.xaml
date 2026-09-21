@@ -175,13 +175,13 @@
             </ScrollView>
 
             
+            <!-- Warstwa blokująca dotyk do elementów pod spodem (kamera/przyciski),
+                 gdy panel wyniku jest otwarty. Celowo BEZ gestu zamykającego -
+                 dotknięcie obok pola Imię/Nazwisko nie może już ukrywać panelu
+                 i czyścić wpisanych danych. Panel zamyka tylko "Anuluj" albo "Zapisz wpis". -->
             <Grid x:Name="ResultBackdrop"
                   IsVisible="False"
-                  BackgroundColor="Transparent">
-                <Grid.GestureRecognizers>
-                    <TapGestureRecognizer Tapped="OnBackdropTapped" />
-                </Grid.GestureRecognizers>
-            </Grid>
+                  BackgroundColor="Transparent" />
 
             <Border x:Name="ResultSheet"
                     IsVisible="False"

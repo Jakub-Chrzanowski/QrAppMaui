@@ -6,6 +6,7 @@ namespace QrAppMaui
     public partial class MainPage : ContentPage
     {
         bool _isCameraRunning;
+        bool _resumeCameraOnAppear;
         string _scannedSerial = string.Empty;
 
         public MainPage()
@@ -31,6 +32,19 @@ namespace QrAppMaui
             catch (Exception ex)
             {
                 await DisplayAlert("Błąd bazy danych", ex.Message, "OK");
+            }
+
+            // Wznawiamy podgląd kamery automatycznie tylko wtedy, gdy był
+            // aktywny przed opuszczeniem strony i nie czeka na nas
+            // niezapisany wynik odczytu (żeby nowy skan nie nadpisał
+            // danych, które użytkownik akurat wpisuje w panelu).
+            if (_resumeCameraOnAppear && !ResultSheet.IsVisible)
+            {
+                _resumeCameraOnAppear = false;
+
+                var status = await Permissions.CheckStatusAsync<Permissions.Camera>();
+                if (status == PermissionStatus.Granted)
+                    StartCamera();
             }
         }
 
@@ -146,8 +160,10 @@ namespace QrAppMaui
                 BarcodeReader.IsDetecting = true;
         }
 
-        void OnBackdropTapped(object sender, TappedEventArgs e) => HideResultSheet();
-
+        // Uwaga: świadomie NIE ma tu już obsługi "dotknij tła, by zamknąć".
+        // Panel z odczytanym kodem zamyka wyłącznie "Anuluj" albo "Zapisz wpis",
+        // żeby przypadkowe kliknięcie obok pola Imię/Nazwisko nie kasowało
+        // zeskanowanych/wpisanych danych.
         void OnCancelClicked(object sender, EventArgs e) => HideResultSheet();
 
         async void OnSaveClicked(object sender, EventArgs e)
@@ -196,6 +212,11 @@ namespace QrAppMaui
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
+
+            // Zapamiętujemy, że skaner był aktywny, żeby po powrocie na tę
+            // stronę (np. z listy wejść) wznowić podgląd kamery bez
+            // konieczności ponownego klikania "Uruchom aparat".
+            _resumeCameraOnAppear = _isCameraRunning;
 
             if (_isCameraRunning)
                 StopCamera();
