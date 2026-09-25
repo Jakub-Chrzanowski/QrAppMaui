@@ -34,10 +34,7 @@ namespace QrAppMaui
                 await DisplayAlert("Błąd bazy danych", ex.Message, "OK");
             }
 
-            // Wznawiamy podgląd kamery automatycznie tylko wtedy, gdy był
-            // aktywny przed opuszczeniem strony i nie czeka na nas
-            // niezapisany wynik odczytu (żeby nowy skan nie nadpisał
-            // danych, które użytkownik akurat wpisuje w panelu).
+       
             if (_resumeCameraOnAppear && !ResultSheet.IsVisible)
             {
                 _resumeCameraOnAppear = false;
@@ -159,11 +156,6 @@ namespace QrAppMaui
             if (_isCameraRunning)
                 BarcodeReader.IsDetecting = true;
         }
-
-        // Uwaga: świadomie NIE ma tu już obsługi "dotknij tła, by zamknąć".
-        // Panel z odczytanym kodem zamyka wyłącznie "Anuluj" albo "Zapisz wpis",
-        // żeby przypadkowe kliknięcie obok pola Imię/Nazwisko nie kasowało
-        // zeskanowanych/wpisanych danych.
         void OnCancelClicked(object sender, EventArgs e) => HideResultSheet();
 
         async void OnSaveClicked(object sender, EventArgs e)
@@ -212,10 +204,7 @@ namespace QrAppMaui
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
-
-            // Zapamiętujemy, że skaner był aktywny, żeby po powrocie na tę
-            // stronę (np. z listy wejść) wznowić podgląd kamery bez
-            // konieczności ponownego klikania "Uruchom aparat".
+          
             _resumeCameraOnAppear = _isCameraRunning;
 
             if (_isCameraRunning)
